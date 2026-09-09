@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const activityInput = document.getElementById("activity");
   const closeRegistrationModal = document.querySelector(".close-modal");
+  const announcementBanner = document.getElementById("announcement-banner");
 
   // Search and filter elements
   const searchInput = document.getElementById("activity-search");
@@ -43,6 +44,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentication state
   let currentUser = null;
+
+  async function fetchActiveAnnouncement() {
+    try {
+      const response = await fetch("/announcements/active");
+      if (!response.ok) {
+        throw new Error("Failed to load announcement");
+      }
+
+      const announcement = await response.json();
+      if (announcement) {
+        announcementBanner.textContent = announcement.text;
+        announcementBanner.classList.remove("hidden");
+      }
+    } catch (error) {
+      console.error("Error loading announcement:", error);
+    }
+  }
 
   // Time range mappings for the dropdown
   const timeRanges = {
@@ -863,6 +881,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Initialize app
   checkAuthentication();
+  fetchActiveAnnouncement();
   initializeFilters();
   fetchActivities();
 });
